@@ -1,0 +1,14 @@
+<template name="wizard">
+  {{#with innerContext ..}}
+  <div id="{{wizard.id}}" class="wizard">
+    <div class="steps">
+      <ol>
+      {{#each steps}}
+        <li class="{{activeStepClass id}}"><a href="{{pathFor 'setup' step=id}}">{{title}}</a></li>
+      {{/each}}
+      </ol>
+    </div>
+    {{> activeStep}}
+  </div>
+  {{/with}}
+</template>
