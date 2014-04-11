@@ -49,12 +49,12 @@ Then configure your schema's and steps
 Template.setupWizard.steps = function() {
   return [{
     id: 'stepOne',
-    title: 'Stap 1. Your account',
+    title: 'Step 1. Your account',
     template: 'setupStepOne',
     formId: 'setup-step-one-form'
   }, {
     id: 'stepTwo',
-    title: 'Stap 2. Confirm',
+    title: 'Step 2. Confirm',
     template: 'setupStepTwo',
     formId: 'setup-step-two-form',
     onSubmit: function(data, mergedData) {
@@ -68,14 +68,14 @@ Template.setupWizard.steps = function() {
 Template.setupStepOne.schema = function() {
   return new SimpleSchema({
   	'username': {
-  		type: String,
-  		label: 'Username',
+      type: String,
+      label: 'Username',
       min: 2,
       max: 30
   	},
     'password': {
-  		type: String,
-  		label: 'Password',
+      type: String,
+      label: 'Password',
       min: 6
   	}
   });
@@ -84,9 +84,9 @@ Template.setupStepOne.schema = function() {
 Template.setupStepTwo.schema = function() {
   return new SimpleSchema({
     'password': {
-  		type: Boolean,
-  		label: 'Confirm your registration'
-  	}
+      type: Boolean,
+      label: 'Confirm your registration'
+    }
   });
 }
 

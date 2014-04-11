@@ -3,11 +3,12 @@ var defaultId = '_defaultId';
 
 Template.wizard.innerContext = function(outerContext) {
   var context = this
-    , wizard = wizardsById[this.id];
+    , wizard = wizardsById[this.id]
+    , activeStep = wizard.activeStep();
 
   var innerContext = {
     steps: context.steps,
-    data: wizard.activeStep().data,
+    data: activeStep && activeStep.data,
     wizard: wizardsById[this.id]
   }
   
@@ -30,13 +31,13 @@ Template.wizard.destroyed = function() {
 }
 
 Template.wizard.activeStepClass = function(id) {
-  var step = this.wizard.activeStep();
-  return (step && step.id == id) && 'active' || '';
+  var activeStep = this.wizard.activeStep();
+  return (activeStep && activeStep.id == id) && 'active' || '';
 }
 
 Template.wizard.activeStep = function() {
   var activeStep = this.wizard.activeStep();
-  return Template[activeStep.template];
+  return activeStep && Template[activeStep.template] || null;
 }
 
 var Wizard = function(template) {
