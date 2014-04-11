@@ -8,7 +8,7 @@ A wizard component for AutoForm.
 Install using Meteorite. When in a Meteorite-managed app directory, enter:
 
 ```
-$ mrt add autoform
+$ mrt add wizard
 ```
 
 ## Example
@@ -71,7 +71,7 @@ Template.setupStepOne.schema = function() {
   		type: String,
   		label: 'Username',
       min: 2,
-  		max: 30
+      max: 30
   	},
     'password': {
   		type: String,
