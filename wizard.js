@@ -88,17 +88,13 @@ Wizard.prototype = {
     AutoForm.addHooks([step.formId], {
       onSubmit: function(data) {
         if(step.onSubmit) {
-          step.onSubmit(data);
+          step.onSubmit(data, self.mergedData());
         } else {
           self.next(data);
         }
         return false;
       }
     });
-  },
-  
-  _setData: function(id, data) {
-    Session.set(this.id + '_' + id, data);
   },
   
   _initActiveStep: function() {
@@ -125,10 +121,22 @@ Wizard.prototype = {
     this.setStep(params.step);
   },
   
+  setData: function(id, data) {
+    Session.set(this.id + '_' + id, data);
+  },
+  
+  mergedData: function() {
+    var data = {}
+    _.each(this._steps, function(step) {
+      _.extend(data, step.data());
+    });
+    return data;
+  },
+  
   next: function(data) {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
     
-    this._setData(this._activeStepId, data);
+    this.setData(this._activeStepId, data);
     
     this.show(activeIndex + 1);
   },
@@ -136,7 +144,7 @@ Wizard.prototype = {
   previous: function() {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
-    this._setData(this._activeStepId, AutoForm.getFormValues(this.activeStep(false).formId));
+    this.setData(this._activeStepId, AutoForm.getFormValues(this.activeStep(false).formId));
     
     this.show(activeIndex - 1);
   },

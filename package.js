@@ -1,6 +1,6 @@
 Package.describe({
   name: 'wizard',
-  summary: "A wizard component for Autoform."
+  summary: "A wizard component for AutoForm."
 });
 
 Package.on_use(function (api) {

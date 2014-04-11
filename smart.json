@@ -1,6 +1,6 @@
 {
   "name": "wizard",
-  "description": "A wizard component for Autoform.",
+  "description": "A wizard component for AutoForm.",
   "homepage": "https://github.com/forwarder/meteor-wizard",
   "author": "Eelco Wiersma <eelco@forwarder.nl> (http://forwarder.nl)",
   "version": "0.1.0",
