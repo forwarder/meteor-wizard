@@ -7,7 +7,6 @@ Template.wizard.innerContext = function(outerContext) {
     , activeStep = wizard.activeStep();
 
   var innerContext = {
-    steps: context.steps,
     data: activeStep && activeStep.data,
     wizard: wizardsById[this.id]
   }
@@ -30,7 +29,7 @@ Template.wizard.destroyed = function() {
   }
 }
 
-Template.wizard.activeStepClass = function(id) {
+Template.wizard.activeStepClass = function(id) { 
   var activeStep = this.wizard.activeStep();
   return (activeStep && activeStep.id == id) && 'active' || '';
 }

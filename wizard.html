@@ -3,7 +3,7 @@
   <div id="{{wizard.id}}" class="wizard">
     <div class="steps">
       <ol>
-      {{#each steps}}
+      {{#each wizard.steps}}
         <li class="{{activeStepClass id}}"><a href="{{pathFor 'setup' step=id}}">{{title}}</a></li>
       {{/each}}
       </ol>
