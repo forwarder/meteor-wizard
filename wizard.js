@@ -46,8 +46,14 @@ var Wizard = function(template) {
   this.id = template.data.id;
   this.route = template.data.route;
   this.steps = template.data.steps;
+
   this._stepsByIndex = [];
-  this._steps = {}
+  this._stepsById = {}
+  
+  this.store = new CacheStore(this.id, {
+    persist: template.data.persist !== false,
+    expires: template.data.expires || null
+  });
   
   this.initialize();
 }
@@ -58,12 +64,13 @@ Wizard.prototype = {
 
   initialize: function() {
     var self = this;
+    
     _.each(this.steps, function(step) {
       self._initStep(step);
     });
     
     Deps.autorun(function() {
-      self._initActiveStep();
+      self._setActiveStep();
     });
   },
 
@@ -79,10 +86,10 @@ Wizard.prototype = {
     }
     
     this._stepsByIndex.push(step.id);
-    this._steps[step.id] = _.extend(step, {
+    this._stepsById[step.id] = _.extend(step, {
       wizard: self,
       data: function() {
-        return Session.get(self.id + '_' + step.id);
+        return self.store.get(step.id);
       }
     });
     
@@ -98,7 +105,7 @@ Wizard.prototype = {
     });
   },
   
-  _initActiveStep: function() {
+  _setActiveStep: function() {
     // show the first step if not bound to a route
     if(!this.route) {
       return this.show(0);
@@ -107,7 +114,7 @@ Wizard.prototype = {
     var params = Router.current().params
       , index = _.indexOf(this._stepsByIndex, params.step)
       , previousStep = this.getStep(index - 1);
-    
+
     // initial route or non existing step, redirect to first step
     if(!params.step || index === -1) {
       return this.show(0);
@@ -123,12 +130,16 @@ Wizard.prototype = {
   },
   
   setData: function(id, data) {
-    Session.set(this.id + '_' + id, data);
+    this.store.set(id, data);
+  },
+  
+  clearData: function() {
+    this.store.clear();
   },
   
   mergedData: function() {
     var data = {}
-    _.each(this._steps, function(step) {
+    _.each(this._stepsById, function(step) {
       _.extend(data, step.data());
     });
     return data;
@@ -171,25 +182,23 @@ Wizard.prototype = {
       id = id in this._stepsByIndex && this._stepsByIndex[id];
     }
     
-    return id in this._steps && this._steps[id];
+    return id in this._stepsById && this._stepsById[id];
   },
   
   activeStep: function(reactive) {
     if(reactive !== false) {
       this._dep.depend();
     }
-    return this._steps[this._activeStepId];
+    return this._stepsById[this._activeStepId];
   },
   
-  setStep: function(step) {
-    this._activeStepId = step;
+  setStep: function(id) {
+    this._activeStepId = id;
     this._dep.changed();
-    return this._steps[this._activeStepId];
+    return this._stepsById[this._activeStepId];
   },
   
   destroy: function() {
-    _.each(this._steps, function(step) {
-      Session.set(this.id + '_' + step.id, null);
-    });
+    if(this.clearOnDestroy) this.clearData();
   } 
 }

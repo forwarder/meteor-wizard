@@ -109,6 +109,25 @@ Add a route parameter to your wizard instance.
 </template>
 ```
 
+## Component reference
+
+wizard
+
+The following attributes are supported:
+
+* `id` Required. The id used to identify the wizard.
+* `route` Optional. The (IronRouter) route name this wizard will be bound to, the route needs a `step` parameter.
+* `steps` Required. A list of steps for this wizard.
+  * `id` Required. Id of the step, also used for the route parameter.
+  * `title` Optional. The title displayed in the breadcrumbs.
+  * `template` Required. Template for this step, be sure to setup an AutoForm in the template.
+  * `formId` Required. The AutoForm form id used in the template. Used to attach submit handlers and retreive the step data.
+  * `onSubmit` Optional. This function is executed after the form is submitted and validates. Shows the next step by default. Parameters:
+      * `data` The current step data.
+      * `mergedData` Merged data of all steps.
+* `persist` Optional. Persist the step data using amplify, . Defaults to `true`.
+* `expires` Optional. Expire the persisted data after [x] miliseconds. Defaults to `null`
+
 ## Todo
 
 * Improve documentation

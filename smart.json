@@ -3,7 +3,7 @@
   "description": "A wizard component for AutoForm.",
   "homepage": "https://github.com/forwarder/meteor-wizard",
   "author": "Eelco Wiersma <eelco@forwarder.nl> (http://forwarder.nl)",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "git": "https://github.com/forwarder/meteor-wizard.git",
   "packages": {
     "autoform": {}
