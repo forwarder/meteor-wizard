@@ -4,7 +4,13 @@
     <div class="steps">
       <ol>
       {{#each wizard.steps}}
-        <li class="{{activeStepClass id}}"><a href="{{pathFor 'setup' step=id}}">{{title}}</a></li>
+        <li class="{{activeStepClass id}}">
+          {{#if wizard.route}}
+            <a href="{{pathFor wizard.route step=id}}">{{title}}</a>
+          {{else}}
+            {{title}}
+          {{/if}}
+          </li>
       {{/each}}
       </ol>
     </div>
