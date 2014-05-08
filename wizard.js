@@ -110,7 +110,11 @@ Wizard.prototype = {
       return this.show(0);
     }
 
-    var params = Router.current().params
+    var current = Router.current();
+    
+    if(!current || (current && current.route.name != this.route)) return false;
+    
+    var params = current.params
       , index = _.indexOf(this._stepsByIndex, params.step)
       , previousStep = this.getStep(index - 1);
 
