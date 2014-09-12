@@ -16,6 +16,7 @@ CacheStore = function(id, options) {
     }
     return memo;
   }, []);
+  
 }
 
 _.extend(CacheStore.prototype, Session, {
