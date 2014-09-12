@@ -9,12 +9,13 @@ CacheStore = function(id, options) {
     expires: null
   }, _.pick(options, 'persist', 'expires'));
   
-  this.keys = _.object(_.map(amplify.store(), function(value, key) {
+  this.keys = _.reduce(amplify.store(), function(memo, value, key) {
     if(key.match(self.id)) {
       Session.set(key, value);
-      return [key, JSON.stringify(value)];
+      memo.push(key);
     }
-  }));
+    return memo;
+  }, []);
 }
 
 _.extend(CacheStore.prototype, Session, {
