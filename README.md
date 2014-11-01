@@ -1,14 +1,12 @@
-meteor-wizard
+forwarder:autoform-wizard
 =============
 
 A wizard component for AutoForm.
 
 ## Installation
 
-Install using Meteorite. When in a Meteorite-managed app directory, enter:
-
 ```
-$ mrt add wizard
+$ meteor add forwarder:autoform-wizard
 ```
 
 ## Example

@@ -1,24 +1,10 @@
 var wizardsById = {};
 var defaultId = '_defaultId';
 
-Template.wizard.innerContext = function(outerContext) {
-  var context = this
-    , wizard = wizardsById[this.id]
-    , activeStep = wizard.activeStep();
-
-  var innerContext = {
-    data: activeStep && activeStep.data,
-    wizard: wizardsById[this.id]
-  }
-  
-  _.extend(innerContext, outerContext);
-  return innerContext;
-}
-
 Template.wizard.created = function() {
   var id = this.data.id || defaultId;
   wizardsById[id] = new Wizard(this);
-}
+};
 
 Template.wizard.destroyed = function() {
   var id = this.data.id || defaultId;
@@ -27,27 +13,43 @@ Template.wizard.destroyed = function() {
     wizardsById[id].destroy();
     delete wizardsById[id];
   }
-}
+};
 
-Template.wizard.activeStepClass = function(id) { 
-  var activeStep = this.wizard.activeStep();
-  return (activeStep && activeStep.id == id) && 'active' || '';
-}
+Template.wizard.helpers({
+  innerContext: function(outerContext) {
+    var context = this
+      , wizard = wizardsById[this.id]
+      , activeStep = wizard.activeStep();
 
-Template.wizard.activeStep = function() {
-  var activeStep = this.wizard.activeStep();
-  return activeStep && Template[activeStep.template] || null;
-}
+    var innerContext = {
+      data: activeStep && activeStep.data,
+      wizard: wizardsById[this.id]
+    };
+  
+    _.extend(innerContext, outerContext);
+    return innerContext;
+  },
+  
+  activeStepClass: function(id) { 
+    var activeStep = this.wizard.activeStep();
+    return (activeStep && activeStep.id == id) && 'active' || '';
+  },
+
+  activeStep: function() {
+    var activeStep = this.wizard.activeStep();
+    return activeStep && activeStep.template || null;
+  }
+});
 
 var Wizard = function(template) {
-  this._dep = new Deps.Dependency;
+  this._dep = new Tracker.Dependency();
   this.template = template;
   this.id = template.data.id;
   this.route = template.data.route;
   this.steps = template.data.steps;
 
   this._stepsByIndex = [];
-  this._stepsById = {}
+  this._stepsById = {};
   
   this.store = new CacheStore(this.id, {
     persist: template.data.persist !== false,
@@ -55,7 +57,7 @@ var Wizard = function(template) {
   });
   
   this.initialize();
-}
+};
 
 Wizard.prototype = {
   
@@ -112,7 +114,7 @@ Wizard.prototype = {
 
     var current = Router.current();
     
-    if(!current || (current && current.route.name != this.route)) return false;
+    if(!current || (current && current.route.getName() != this.route)) return false;
     
     var params = current.params
       , index = _.indexOf(this._stepsByIndex, params.step)
@@ -204,4 +206,4 @@ Wizard.prototype = {
   destroy: function() {
     if(this.clearOnDestroy) this.clearData();
   } 
-}
+};
