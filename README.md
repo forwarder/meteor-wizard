@@ -55,9 +55,13 @@ Template.setupWizard.steps = function() {
     title: 'Step 2. Confirm',
     template: 'setupStepTwo',
     formId: 'setup-step-two-form',
-    onSubmit: function(data, mergedData) {
-      Accounts.createUser(mergedData, function(err) {
-        if(!err) Router.go('/');
+    onSubmit: function(data, wizard) {
+      Accounts.createUser(wizard.mergedData(), function(err) {
+        if (err) {
+          this.done();
+        } else {
+          Router.go('/');
+        }
       });
     }
   }]
@@ -109,7 +113,7 @@ Add a route parameter to your wizard instance.
 
 ## Component reference
 
-wizard
+### Wizard configuration
 
 The following attributes are supported:
 
@@ -120,9 +124,9 @@ The following attributes are supported:
   * `title` Optional. The title displayed in the breadcrumbs.
   * `template` Required. Template for this step, be sure to setup an AutoForm in the template.
   * `formId` Required. The AutoForm form id used in the template. Used to attach submit handlers and retreive the step data.
-  * `onSubmit` Optional. This function is executed after the form is submitted and validates. Shows the next step by default. Parameters:
+  * `onSubmit` Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
       * `data` The current step data.
-      * `mergedData` Merged data of all steps.
+      * `wizard` The wizard instance.
 * `persist` Optional. Persist the step data using amplify, . Defaults to `true`.
 * `expires` Optional. Expire the persisted data after [x] miliseconds. Defaults to `null`
 

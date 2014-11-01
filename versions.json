@@ -2,7 +2,7 @@
   "dependencies": [
     [
       "aldeed:autoform",
-      "1.0.0"
+      "3.2.0"
     ],
     [
       "aldeed:simple-schema",
@@ -38,10 +38,6 @@
     ],
     [
       "geojson-utils",
-      "1.0.1"
-    ],
-    [
-      "handlebars",
       "1.0.1"
     ],
     [

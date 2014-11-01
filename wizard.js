@@ -97,7 +97,7 @@ Wizard.prototype = {
     AutoForm.addHooks([step.formId], {
       onSubmit: function(data) {
         if(step.onSubmit) {
-          step.onSubmit(data, self.mergedData());
+          step.onSubmit.call(this, data, self);
         } else {
           self.next(data);
         }
