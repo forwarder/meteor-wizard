@@ -6,7 +6,7 @@
     ],
     [
       "aldeed:simple-schema",
-      "1.0.2"
+      "1.0.3"
     ],
     [
       "amplify",
@@ -74,7 +74,7 @@
     ],
     [
       "mrt:moment",
-      "2.8.1"
+      "2.6.0"
     ],
     [
       "observe-sequence",

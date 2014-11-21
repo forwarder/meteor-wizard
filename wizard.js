@@ -93,7 +93,7 @@ Wizard.prototype = {
         return self.store.get(step.id);
       }
     });
-    
+
     AutoForm.addHooks([step.formId], {
       onSubmit: function(data) {
         if(step.onSubmit) {
@@ -103,7 +103,7 @@ Wizard.prototype = {
         }
         return false;
       }
-    });
+    }, true);
   },
   
   _setActiveStep: function() {
