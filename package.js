@@ -1,7 +1,7 @@
 Package.describe({
   name: 'forwarder:autoform-wizard',
   summary: 'A wizard component for AutoForm.',
-  version: '0.3.1'
+  version: '0.3.2'
 });
 
 Package.onUse(function(api) {
