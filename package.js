@@ -17,7 +17,7 @@ Package.onUse(function(api) {
     'amplify@1.0.0'
   ], 'client');
   
-  api.use('aldeed:autoform@3.0.0', 'client');
+  api.use('aldeed:autoform', 'client');
   
   api.addFiles([
     'wizard.html',
