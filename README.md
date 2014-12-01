@@ -58,7 +58,7 @@ Template.basicWizard.helpers({
       id: 'confirm',
       title: 'Confirm',
       template: 'confirm',
-      formId: 'confirm-form,
+      formId: 'confirm-form',
       onSubmit: function(data, wizard) {
         // submit logic
       }
