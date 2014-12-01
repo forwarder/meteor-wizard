@@ -1,7 +1,7 @@
-forwarder:autoform-wizard
+AutoForm Wizard
 =============
 
-A wizard component for AutoForm.
+AutoForm Wizard is a multi step form component for AutoForm.
 
 ## Installation
 
@@ -9,107 +9,19 @@ A wizard component for AutoForm.
 $ meteor add forwarder:autoform-wizard
 ```
 
+## Dependencies
+
+* AutoForm versions 3 and 4.
+* Iron Router support is optional, works with version 1.
+* amplify (deprecated, will be replaced soon).
+
 ## Example
 
-First setup your template.
+A running example can be found here:
+http://autoform-wizard.meteor.com
 
-```html
-<template name="setupWizard">
-  {{> wizard id="setup-wizard" steps=steps}}
-</template>
-
-<template name="setupStepOne">
-  {{#autoForm schema=schema doc=data id="setup-step-one-form"}}
-    
-    {{> afQuickField name="username"}}
-    
-    {{> afQuickField name="password"}}
-    
-    <button type="submit" class="btn btn-success btn-lg pull-right">Next</button>
-    
-  {{/autoForm}}
-</template>
-
-<template name="setupStepTwo">
-  {{#autoForm schema=schema doc=data id="setup-step-two-form"}}
-    
-    {{> afQuickField name="confirm"}}
-    
-    <button type="submit" class="btn btn-success btn-lg pull-right">Submit</button>
-    
-  {{/autoForm}}
-</template>
-```
-
-Then configure your schema's and steps
-
-```js
-Template.setupWizard.steps = function() {
-  return [{
-    id: 'stepOne',
-    title: 'Step 1. Your account',
-    template: 'setupStepOne',
-    formId: 'setup-step-one-form'
-  }, {
-    id: 'stepTwo',
-    title: 'Step 2. Confirm',
-    template: 'setupStepTwo',
-    formId: 'setup-step-two-form',
-    onSubmit: function(data, wizard) {
-      Accounts.createUser(wizard.mergedData(), function(err) {
-        if (err) {
-          this.done();
-        } else {
-          Router.go('/');
-        }
-      });
-    }
-  }]
-}
-
-Template.setupStepOne.schema = function() {
-  return new SimpleSchema({
-  	'username': {
-      type: String,
-      label: 'Username',
-      min: 2,
-      max: 30
-  	},
-    'password': {
-      type: String,
-      label: 'Password',
-      min: 6
-  	}
-  });
-}
-
-Template.setupStepTwo.schema = function() {
-  return new SimpleSchema({
-    'password': {
-      type: Boolean,
-      label: 'Confirm your registration'
-    }
-  });
-}
-
-```
-
-## IronRouter support
-
-You can also bind the wizard to IronRouter.
-
-Add the following route to your router config.
- 
-```js
-this.route('setup', {path: '/setup/:step'});
-```
-
-Add a route parameter to your wizard instance.
-```html
-<template name="setupWizard">
-  {{> wizard id="setup-wizard" route="setup" steps=steps}}
-</template>
-```
+The source code of the example app can be found on Github.
+https://github.com/forwarder/meteor-wizard-example
 
 ## Component reference
 
@@ -117,21 +29,70 @@ Add a route parameter to your wizard instance.
 
 The following attributes are supported:
 
-* `id` Required. The id used to identify the wizard.
-* `route` Optional. The (IronRouter) route name this wizard will be bound to, the route needs a `step` parameter.
-* `steps` Required. A list of steps for this wizard.
-  * `id` Required. Id of the step, also used for the route parameter.
-  * `title` Optional. The title displayed in the breadcrumbs.
-  * `template` Required. Template for this step, be sure to setup an AutoForm in the template.
-  * `formId` Required. The AutoForm form id used in the template. Used to attach submit handlers and retreive the step data.
-  * `onSubmit` Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
-      * `data` The current step data.
-      * `wizard` The wizard instance.
-* `persist` Optional. Persist the step data using amplify, . Defaults to `true`.
-* `expires` Optional. Expire the persisted data after [x] miliseconds. Defaults to `null`
+* `id`: Required. The id used to identify the wizard.
+* `route`: Optional. The (Iron Router) route name this wizard will be bound to, the route needs a `step` parameter.
+* `steps`: Required. A list of steps for this wizard.
+  * `id`: Required. Id of the step, also used for the route parameter.
+  * `title`: Optional. The title displayed in the breadcrumbs.
+  * `template`: Required. Template for this step, be sure to setup an AutoForm in the template.
+  * `formId`: Required. The AutoForm form id used in the template. Used to attach submit handlers and retreive the step data.
+  * `onSubmit`: Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
+      * `data`: The current step data.
+      * `wizard`: The wizard instance.
+* `persist`: Optional. Persist the step data using amplify. Defaults to `true`.
+* `expires`: Optional. Expire the persisted data after [x] miliseconds. Defaults to `null`.
+* `clearOnDestroy`: Optional. Clear the cache storage after closing the wizard. Defaults to `false`.
+* `stepsTemplate`: Optional. A custom steps template.
+
+#### onSubmit
+Use this callback to process the from data.
+```js
+onSubmit: function(data, wizard) {
+  var self = this;
+  Orders.insert(_.extend(wizard.mergedData(), data), function(err, id) {
+    if (err) {
+      self.done();
+    } else {
+      Router.go('viewOrder', {
+        _id: id
+      });
+    }
+  });
+}
+```
+
+Arguments:
+
+* `data`: Form data of the current step.
+* `wizard`: The wizard instance.
+
+`this` references to the AutoForm instance, see the [AutoForm documentation](https://github.com/aldeed/meteor-autoform#onsubmit) for more information.
+
+### Wizard instance methods
+
+* `mergedData()`: Get all data from previous steps. Does not include data of the current step in the onSubmit callback.
+* `next()`: Go to the next step.
+* `previous()`: Go to the previous step.
+* `show(id)`: Show a specific step by id or index.
+
+## IronRouter support
+
+You can also bind the wizard to Iron Router.
+
+Add a new route to your router config, with the :step parameter.
+ 
+```js
+Router.route('/order/:step', {name: 'order'});
+```
+
+Add a route parameter with the name of the route to your wizard instance.
+```
+{{> wizard id="setup-wizard" route="order" steps=steps}}
+```
 
 ## Todo
 
+* Replace amplify
 * Improve documentation
 * Write some tests
 * Probably more, just let me know or submit a pull request :)
