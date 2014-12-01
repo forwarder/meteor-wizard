@@ -53,7 +53,7 @@ Template.basicWizard.helpers({
       id: 'information',
       title: 'Information',
       template: 'information',
-      formId: 'information-form
+      formId: 'information-form'
     },{
       id: 'confirm',
       title: 'Confirm',
