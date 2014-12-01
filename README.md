@@ -3,17 +3,20 @@ AutoForm Wizard
 
 AutoForm Wizard is a multi step form component for AutoForm.
 
+
 ## Installation
 
 ```
 $ meteor add forwarder:autoform-wizard
 ```
 
+
 ## Dependencies
 
 * AutoForm versions 3 or 4.
 * Iron Router support is optional, works with version 1.
 * amplify (deprecated, will be replaced soon).
+
 
 ## Example
 
@@ -22,6 +25,48 @@ http://autoform-wizard.meteor.com
 
 The source code of the example app can be found on Github.
 https://github.com/forwarder/meteor-wizard-example
+
+## Basic usage
+
+### Create templates for the wizard
+
+```html
+<template name="basicWizard">
+  {{> wizard id="basic-wizard" steps=steps}}
+</template>
+
+<template name="information">
+  {{> quickform id="information-form" schema=schema}}
+</template>
+
+<template name="confirm">
+  {{> quickForm id="confirm-form" schema=schema}}
+</template>
+```
+
+### Define the steps in a template helper
+
+```js
+Template.basicWizard.helpers({
+  steps: function() {
+    return [{
+      id: 'information',
+      title: 'Information',
+      template: 'information',
+      formId: 'information-form
+    },{
+      id: 'confirm',
+      title: 'Confirm',
+      template: 'confirm',
+      formId: 'confirm-form,
+      onSubmit: function(data, wizard) {
+        // submit logic
+      }
+    }]
+  }
+});
+```
+
 
 ## Component reference
 
@@ -70,10 +115,23 @@ Arguments:
 
 ### Wizard instance methods
 
+The wizard instance is added to your step templates data context, so you can access these methods in your event handlers etc.
+
 * `mergedData()`: Get all data from previous steps. Does not include data of the current step in the onSubmit callback.
 * `next()`: Go to the next step.
 * `previous()`: Go to the previous step.
 * `show(id)`: Show a specific step by id or index.
+
+Example usage:
+```js
+Template.wizardStep2.events({
+  'click .back': function(e, template) {
+    e.preventDefault();
+    this.wizard.previous();
+  }
+});
+```
+
 
 ## IronRouter support
 
@@ -87,8 +145,9 @@ Router.route('/order/:step', {name: 'order'});
 
 Add a route parameter with the name of the route to your wizard instance.
 ```
-{{> wizard id="setup-wizard" route="order" steps=steps}}
+{{> wizard id="order-wizard" route="order" steps=steps}}
 ```
+
 
 ## Todo
 
