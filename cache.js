@@ -12,12 +12,11 @@ CacheStore = function(id, options) {
   this.keys = _.reduce(amplify.store(), function(memo, value, key) {
     if(key.match(self.id)) {
       Session.set(key, value);
-      memo.push(key);
+      memo.push(key.replace(self.id + '__', ''));
     }
     return memo;
   }, []);
-  
-}
+};
 
 _.extend(CacheStore.prototype, Session, {
   
@@ -38,7 +37,7 @@ _.extend(CacheStore.prototype, Session, {
   
   clear: function() {
     var self = this;
-    _.each(this.keys, function(value, key) {
+    _.each(this.keys, function(key) {
       self.set(key, null);
     });
   }

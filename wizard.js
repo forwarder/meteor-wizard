@@ -23,30 +23,33 @@ Template.wizard.helpers({
 
     var innerContext = {
       data: activeStep && activeStep.data,
-      wizard: wizardsById[this.id]
+      wizard: wizardsById[this.id],
+      stepsTemplate: this.stepsTemplate || 'wizardSteps'
     };
-  
+
     _.extend(innerContext, outerContext);
     return innerContext;
   },
-  
-  activeStepClass: function(id) { 
-    var activeStep = this.wizard.activeStep();
-    return (activeStep && activeStep.id == id) && 'active' || '';
-  },
-
   activeStep: function() {
     var activeStep = this.wizard.activeStep();
     return activeStep && activeStep.template || null;
   }
 });
 
+Template.wizardSteps.helpers({
+  activeStepClass: function(id) { 
+    var activeStep = this.wizard.activeStep();
+    return (activeStep && activeStep.id == id) && 'active' || '';
+  }
+});
+
 var Wizard = function(template) {
   this._dep = new Tracker.Dependency();
   this.template = template;
-  this.id = template.data.id;
-  this.route = template.data.route;
-  this.steps = template.data.steps;
+  
+  _.extend(this, _.pick(template.data, [
+    'id', 'route', 'steps', 'clearOnDestroy'
+  ]));
 
   this._stepsByIndex = [];
   this._stepsById = {};
@@ -201,6 +204,10 @@ Wizard.prototype = {
     this._activeStepId = id;
     this._dep.changed();
     return this._stepsById[this._activeStepId];
+  },
+  
+  indexOf: function(id) {
+    return _.indexOf(this._stepsByIndex, id);
   },
   
   destroy: function() {

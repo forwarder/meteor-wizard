@@ -1,20 +1,24 @@
 <template name="wizard">
   {{#with innerContext ..}}
   <div id="{{wizard.id}}" class="wizard">
-    <div class="steps">
-      <ol>
-      {{#each wizard.steps}}
-        <li class="{{activeStepClass id}}">
-          {{#if wizard.route}}
-            <a href="{{pathFor wizard.route step=id}}">{{title}}</a>
-          {{else}}
-            {{title}}
-          {{/if}}
-          </li>
-      {{/each}}
-      </ol>
-    </div>
+    {{> Template.dynamic template=stepsTemplate}}
     {{> Template.dynamic template=activeStep}}
   </div>
   {{/with}}
+</template>
+
+<template name="wizardSteps">
+  <div class="steps">
+    <ol>
+    {{#each wizard.steps}}
+      <li class="{{activeStepClass id}}">
+        {{#if wizard.route}}
+          <a href="{{pathFor wizard.route step=id}}">{{title}}</a>
+        {{else}}
+          {{title}}
+        {{/if}}
+        </li>
+    {{/each}}
+    </ol>
+  </div>
 </template>
