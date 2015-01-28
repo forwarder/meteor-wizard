@@ -37,7 +37,7 @@ Template.wizardSteps.helpers({
 var Wizard = function(template) {
   this._dep = new Tracker.Dependency();
   this.template = template;
-  this.useCache = template.data.useCache !== false;
+  this.useCache = !_.isFunction(template.data.data);
 
   _.extend(this, _.pick(template.data, [
     'id', 'route', 'steps', 'clearOnDestroy'
@@ -46,7 +46,7 @@ var Wizard = function(template) {
   this._stepsByIndex = [];
   this._stepsById = {};
 
-  if (this.useCache) {
+  if (!this.useCache) {
     this.store = new CacheStore(this.id, {
       persist: template.data.persist !== false,
       expires: template.data.expires || null
@@ -84,7 +84,6 @@ Wizard.prototype = {
     }
 
     (function (template) {
-      var useCustom = !self.useCache && _.isFunction(template.data);
       var defaultData = function () { // default data function
         return self.store && self.store.get(step.id);
       };
@@ -96,7 +95,7 @@ Wizard.prototype = {
       self._stepsById[step.id] = _.defaults(step, {
         wizard: self,
         // use custom data function if not using cache
-        data: useCustom ? customData : defaultData
+        data: self.useCache ? defaultData : customData
       });
     })(self.template.data);
 
@@ -104,7 +103,7 @@ Wizard.prototype = {
     AutoForm.addHooks([step.formId], {
       onSubmit: function(data) {
         if(step.onSubmit) {
-          step.onSubmit.call(this, data, self, step);
+          step.onSubmit.call(this, data, self);
         } else {
           self.next(data);
         }
@@ -128,17 +127,17 @@ Wizard.prototype = {
       , previousStep = this.getStep(index - 1);
 
     // initial route or non existing step, redirect to first step
-      if(!params.step || index === -1) {
-        return this.show(0);
-      }
+    if(!params.step || index === -1) {
+      return this.show(0);
+    }
 
-      // invalid step
-      if(index > 0 && previousStep && !previousStep.data()) {
-        return this.show(0);
-      }
+    // invalid step
+    if(index > 0 && previousStep && !previousStep.data()) {
+      return this.show(0);
+    }
 
-      // valid
-      this.setStep(params.step);
+    // valid
+    this.setStep(params.step);
   },
 
   setData: function(id, data) {
