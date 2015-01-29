@@ -4,6 +4,7 @@ Template.wizard.created = function() {
 
 Template.wizard.destroyed = function() {
   this.wizard && this.wizard.destroy();
+  this.wizard = null;
 };
 
 Template.wizard.helpers({
@@ -99,17 +100,37 @@ Wizard.prototype = {
       });
     })(self.template.data);
 
-
     AutoForm.addHooks([step.formId], {
-      onSubmit: function(data) {
+      onSubmit: function(insertDoc, updateDoc, currentDoc) {
         if(step.onSubmit) {
-          step.onSubmit.call(this, data, self);
+          step.onSubmit.call(this, insertDoc, updateDoc, currentDoc, self);
         } else {
-          self.next(data);
+          this.done();
+          self.next(insertDoc);
         }
         return false;
+      },
+      onSuccess: function(operation, result, template) {
+        if(step.onSuccess) {
+          step.onSuccess.call(this, operation, result, template, self);
+        }
+      },
+      onError: function(operation, error, template) {
+        if(step.onError) {
+          step.onError.call(this, operation, error, template, self);
+        }
+      },
+      beginSubmit: function(formId, template) {
+        if(step.beginSubmit) {
+          step.beginSubmit.call(this, formId, template, self);
+        }
+      },
+      endSubmit: function(formId, template) {
+        if(step.endSubmit) {
+          step.endSubmit.call(this, formId, template, self);
+        }
       }
-    }, true);
+    });
   },
 
   _setActiveStep: function() {
