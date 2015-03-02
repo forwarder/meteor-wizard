@@ -18,21 +18,15 @@ Template.wizard.destroyed = function() {
 Template.wizard.helpers({
   innerContext: function(outerContext) {
     var context = this
-      , wizard = wizardsById[this.id]
-      , activeStep = wizard.activeStep();
-
-    var innerContext = {
-      data: activeStep && activeStep.data,
+    , wizard = wizardsById[this.id];
+      
+    return _.extend({
       wizard: wizardsById[this.id],
       stepsTemplate: this.stepsTemplate || 'wizardSteps'
-    };
-
-    _.extend(innerContext, outerContext);
-    return innerContext;
+    }, outerContext);
   },
   activeStep: function() {
-    var activeStep = this.wizard.activeStep();
-    return activeStep && activeStep.template || null;
+    return this.wizard.activeStep();
   }
 });
 
@@ -73,7 +67,7 @@ Wizard.prototype = {
       self._initStep(step);
     });
     
-    Deps.autorun(function() {
+    Tracker.autorun(function() {
       self._setActiveStep();
     });
   },
@@ -81,12 +75,16 @@ Wizard.prototype = {
   _initStep: function(step) {
     var self = this;
     
-    if(!step.id) {
-      throw new Error('Step.id is required');
+    if (!step.id) {
+      throw new Meteor.Error('', 'Step.id is required');
     }
     
-    if(!step.formId) {
-      throw new Error('Step.formId is required');
+    if (!step.formId) {
+      step.formId = step.id + '-form';
+    }
+    
+    if (!step.template) {
+      step.template = '__wizard_step';
     }
     
     this._stepsByIndex.push(step.id);
@@ -213,4 +211,8 @@ Wizard.prototype = {
   destroy: function() {
     if(this.clearOnDestroy) this.clearData();
   } 
+};
+
+Template.wizard.get = function(id) {
+  return wizardsById[id || defaultId];
 };

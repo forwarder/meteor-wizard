@@ -2,7 +2,7 @@
   {{#with innerContext ..}}
   <div id="{{wizard.id}}" class="wizard">
     {{> Template.dynamic template=stepsTemplate}}
-    {{> Template.dynamic template=activeStep}}
+    {{> Template.dynamic template=activeStep.template data=activeStep}}
   </div>
   {{/with}}
 </template>
@@ -21,4 +21,8 @@
     {{/each}}
     </ol>
   </div>
+</template>
+
+<template name="__wizard_step">
+  {{> quickForm id=formId doc=data schema=schema}}
 </template>

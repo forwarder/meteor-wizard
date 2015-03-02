@@ -36,11 +36,11 @@ https://github.com/forwarder/meteor-wizard-example
 </template>
 
 <template name="information">
-  {{> quickform id="information-form" schema=schema}}
+  {{> quickform id="information-form" doc=data schema=schema}}
 </template>
 
 <template name="confirm">
-  {{> quickForm id="confirm-form" schema=schema}}
+  {{> quickForm id="confirm-form" doc=data schema=schema}}
 </template>
 ```
 
@@ -79,8 +79,9 @@ The following attributes are supported:
 * `steps`: Required. A list of steps for this wizard.
   * `id`: Required. Id of the step, also used for the route parameter.
   * `title`: Optional. The title displayed in the breadcrumbs.
-  * `template`: Required. Template for this step, be sure to setup an AutoForm in the template.
-  * `formId`: Required. The AutoForm form id used in the template. Used to attach submit handlers and retreive the step data.
+  * `template`: Optional. Uses a default template with a quickform if not set.
+  * `schema`: Optional. Only required if don't use a custom template.
+  * `formId`: Optional. The AutoForm form id used in the template. Appends '-form' to the step.id if not set. Used to attach submit handlers and retreive the step data.
   * `onSubmit`: Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
       * `data`: The current step data.
       * `wizard`: The wizard instance.
