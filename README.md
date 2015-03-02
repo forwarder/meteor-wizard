@@ -85,8 +85,7 @@ The following attributes are supported:
   * `onSubmit`: Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
       * `data`: The current step data.
       * `wizard`: The wizard instance.
-* `persist`: Optional. Persist the step data using amplify. Defaults to `true`.
-* `expires`: Optional. Expire the persisted data after [x] miliseconds. Defaults to `null`.
+* `persist`: Optional. Persist the step data in localStorage. Defaults to `true`.
 * `clearOnDestroy`: Optional. Clear the cache storage after closing the wizard. Defaults to `false`.
 * `stepsTemplate`: Optional. A custom steps template.
 
