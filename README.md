@@ -15,7 +15,6 @@ $ meteor add forwarder:autoform-wizard
 
 * AutoForm versions 3 or 4.
 * Iron Router support is optional, works with version 1.
-* amplify (deprecated, will be replaced soon).
 
 
 ## Example
@@ -26,6 +25,7 @@ http://autoform-wizard.meteor.com
 The source code of the example app can be found on Github.
 https://github.com/forwarder/meteor-wizard-example
 
+
 ## Basic usage
 
 ### Create templates for the wizard
@@ -34,7 +34,41 @@ https://github.com/forwarder/meteor-wizard-example
 <template name="basicWizard">
   {{> wizard id="basic-wizard" steps=steps}}
 </template>
+```
 
+### Define the steps in a template helper
+
+```js
+Schema = {};
+Schema.information = new SimpleSchema(...);
+Schema.confirm = new SimpleSchema(...);
+
+Template.basicWizard.helpers({
+  steps: function() {
+    return [{
+      id: 'information',
+      title: 'Information',
+      schema: Schema.information
+    },{
+      id: 'confirm',
+      title: 'Confirm',
+      schema: Schema.confirm,
+      onSubmit: function(data, wizard) {
+        // submit logic
+      }
+    }]
+  }
+});
+```
+
+
+## Custom step templates
+
+If you need more flexibility in your forms, you can define your own templates to be used for the steps.
+
+### Define your templates and include AutoForm
+
+```html
 <template name="information">
   {{> quickform id="information-form" doc=data schema=schema}}
 </template>
@@ -44,7 +78,7 @@ https://github.com/forwarder/meteor-wizard-example
 </template>
 ```
 
-### Define the steps in a template helper
+### Configure steps
 
 ```js
 Template.basicWizard.helpers({
@@ -53,7 +87,7 @@ Template.basicWizard.helpers({
       id: 'information',
       title: 'Information',
       template: 'information',
-      formId: 'information-form'
+      formId: 'information-form',
     },{
       id: 'confirm',
       title: 'Confirm',
@@ -66,7 +100,6 @@ Template.basicWizard.helpers({
   }
 });
 ```
-
 
 ## Component reference
 
@@ -151,7 +184,6 @@ Add a route parameter with the name of the route to your wizard instance.
 
 ## Todo
 
-* Replace amplify
 * Improve documentation
 * Write some tests
 * Probably more, just let me know or submit a pull request :)

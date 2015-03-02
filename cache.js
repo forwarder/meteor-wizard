@@ -11,7 +11,7 @@ CacheStore = function(id, options) {
   if (this.persist) {
     var cache = Meteor._localStorage.getItem(this.id);
     if (cache) {
-      _.each(EJSON.parse(cache), function(key, value) {
+      _.each(EJSON.parse(cache), function(value, key) {
         Session.set(self.prefix(key), value);
         self.keys[key] = value;
       });

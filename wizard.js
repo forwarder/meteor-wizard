@@ -1,6 +1,19 @@
 var wizardsById = {};
 var defaultId = '_defaultId';
 
+function stepParams(id) {
+  return Tracker.nonreactive(function() {
+    var route = Router.current()
+      , params = route.params || {};
+      
+    return _.extend(params, {step: id});
+  });
+}
+
+Template.registerHelper('pathForStep', function(id) {
+  return Router.path(this.wizard.route, stepParams(id));
+});
+
 Template.wizard.created = function() {
   var id = this.data.id || defaultId;
   wizardsById[id] = new Wizard(this);
@@ -19,14 +32,21 @@ Template.wizard.helpers({
   innerContext: function(outerContext) {
     var context = this
     , wizard = wizardsById[this.id];
-      
+
     return _.extend({
       wizard: wizardsById[this.id],
       stepsTemplate: this.stepsTemplate || 'wizardSteps'
     }, outerContext);
   },
   activeStep: function() {
-    return this.wizard.activeStep();
+    // autoform doesn't support reactive schema yet,
+    // need this to support a default step template.
+    var activeStep = this.wizard.activeStep();
+    return new Blaze.Template(function() {
+      return Blaze.With(activeStep, function() {
+        return Template[activeStep.template || '__wizard_step'];
+      })
+    });
   }
 });
 
@@ -81,10 +101,6 @@ Wizard.prototype = {
     
     if (!step.formId) {
       step.formId = step.id + '-form';
-    }
-    
-    if (!step.template) {
-      step.template = '__wizard_step';
     }
     
     this._stepsByIndex.push(step.id);
@@ -175,7 +191,7 @@ Wizard.prototype = {
     if(!id) return false;
 
     if(this.route) {
-      Router.go(this.route, {step: id});
+      Router.go(this.route, stepParams(id));
     } else {
       this.setStep(id);
     }

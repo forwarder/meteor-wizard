@@ -2,7 +2,7 @@
   {{#with innerContext ..}}
   <div id="{{wizard.id}}" class="wizard">
     {{> Template.dynamic template=stepsTemplate}}
-    {{> Template.dynamic template=activeStep.template data=activeStep}}
+    {{> activeStep}}
   </div>
   {{/with}}
 </template>
@@ -13,7 +13,7 @@
     {{#each wizard.steps}}
       <li class="{{activeStepClass id}}">
         {{#if wizard.route}}
-          <a href="{{pathFor wizard.route step=id}}">{{title}}</a>
+          <a href="{{pathForStep id}}">{{title}}</a>
         {{else}}
           {{title}}
         {{/if}}
