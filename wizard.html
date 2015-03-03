@@ -1,13 +1,13 @@
 <template name="wizard">
   {{#with innerContext ..}}
   <div id="{{wizard.id}}" class="wizard">
-    {{> Template.dynamic template=stepsTemplate}}
+    {{> Template.dynamic template=wizard.stepsTemplate}}
     {{> activeStep}}
   </div>
   {{/with}}
 </template>
 
-<template name="wizardSteps">
+<template name="__wizard_steps">
   <div class="steps">
     <ol>
     {{#each wizard.steps}}
@@ -24,5 +24,27 @@
 </template>
 
 <template name="__wizard_step">
-  {{> quickForm id=formId doc=data schema=schema}}
+  <div class="wizard-step">
+    {{#autoForm id=formId doc=data schema=schema}}
+      {{#each afFieldNames}}
+        {{> afQuickField name=this options="auto"}}
+      {{/each}}
+      {{> __wizard_nav}}
+    {{/autoForm}}
+  </div>
+</template>
+
+<template name="__wizard_nav">
+  {{#with wizard}}
+  <nav class="wizard-nav">
+    {{#if showBackButton}}
+    <button type="button" class="wizard-back-button {{buttonClasses}}">{{backButton}}</button>
+    {{/if}}
+    {{#if isLastStep}}
+    <button type="submit" class="wizard-submit-button {{buttonClasses}}">{{confirmButton}}</button>
+    {{else}}
+    <button type="submit" class="wizard-next-button {{buttonClasses}}">{{nextButton}}</button>
+    {{/if}}
+  </nav>
+  {{/with}}
 </template>

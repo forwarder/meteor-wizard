@@ -16,7 +16,7 @@ Template.registerHelper('pathForStep', function(id) {
 
 Template.wizard.created = function() {
   var id = this.data.id || defaultId;
-  wizardsById[id] = new Wizard(this);
+  wizardsById[id] = new Wizard(this.data);
 };
 
 Template.wizard.destroyed = function() {
@@ -30,12 +30,9 @@ Template.wizard.destroyed = function() {
 
 Template.wizard.helpers({
   innerContext: function(outerContext) {
-    var context = this
-    , wizard = wizardsById[this.id];
-
+    var context = this;
     return _.extend({
-      wizard: wizardsById[this.id],
-      stepsTemplate: this.stepsTemplate || 'wizardSteps'
+      wizard: wizardsById[this.id]
     }, outerContext);
   },
   activeStep: function() {
@@ -45,32 +42,60 @@ Template.wizard.helpers({
     return new Blaze.Template(function() {
       return Blaze.With(activeStep, function() {
         return Template[activeStep.template || '__wizard_step'];
-      })
+      });
     });
   }
 });
 
-Template.wizardSteps.helpers({
+Template.__wizard_steps.helpers({
   activeStepClass: function(id) { 
     var activeStep = this.wizard.activeStep();
     return (activeStep && activeStep.id == id) && 'active' || '';
   }
 });
 
-var Wizard = function(template) {
-  this._dep = new Tracker.Dependency();
-  this.template = template;
-  
-  _.extend(this, _.pick(template.data, [
-    'id', 'route', 'steps', 'clearOnDestroy'
-  ]));
+Template.__wizard_nav.events({
+  'click .wizard-back-button': function(e) {
+    e.preventDefault();
+    this.previous();
+  }
+});
 
+Template.__wizard_nav.helpers({
+  showBackButton: function() {
+    return this.backButton && !this.isFirstStep();
+  }
+});
+
+var Wizard = function(options) {
+  this._dep = new Tracker.Dependency();
+  
+  options = _.chain(options).pick(
+    'id',
+    'route',
+    'steps',
+    'stepsTemplate',
+    'buttonClasses',
+    'nextButton',
+    'backButton',
+    'confirmButton',
+    'persist',
+    'clearOnDestroy'
+  ).defaults({
+    stepsTemplate: '__wizard_steps',
+    nextButton: 'Next',
+    backButton: 'Back',
+    confirmButton: 'Confirm',
+    persist: true
+  }).value();
+  
+  _.extend(this, options);
+  
   this._stepsByIndex = [];
   this._stepsById = {};
   
   this.store = new CacheStore(this.id, {
-    persist: template.data.persist !== false,
-    expires: template.data.expires || null
+    persist: this.persist !== false
   });
   
   this.initialize();
@@ -160,7 +185,7 @@ Wizard.prototype = {
   },
   
   mergedData: function() {
-    var data = {}
+    var data = {};
     _.each(this._stepsById, function(step) {
       _.extend(data, step.data());
     });
@@ -218,6 +243,16 @@ Wizard.prototype = {
     this._activeStepId = id;
     this._dep.changed();
     return this._stepsById[this._activeStepId];
+  },
+  
+  isFirstStep: function(id) {
+    id = id || this._activeStepId;
+    return this.indexOf(id) === 0;
+  },
+  
+  isLastStep: function(id) {
+    id = id || this._activeStepId;
+    return this.indexOf(id) === this._stepsByIndex.length - 1;
   },
   
   indexOf: function(id) {

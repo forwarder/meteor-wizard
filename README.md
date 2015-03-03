@@ -118,6 +118,10 @@ The following attributes are supported:
   * `onSubmit`: Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
       * `data`: The current step data.
       * `wizard`: The wizard instance.
+* `buttonClasses`: Optional. CSS classes to add to the buttons.
+* `nextButton`: Optional. Defaults to `Next`.
+* `backButton`: Optional. Defaults to `Back`. Set to `false`, to not render this button.
+* `confirmButton`: Optional. Defaults to `Confirm`.
 * `persist`: Optional. Persist the step data in localStorage. Defaults to `true`.
 * `clearOnDestroy`: Optional. Clear the cache storage after closing the wizard. Defaults to `false`.
 * `stepsTemplate`: Optional. A custom steps template.
@@ -154,6 +158,9 @@ The wizard instance is added to your step templates data context, so you can acc
 * `next()`: Go to the next step.
 * `previous()`: Go to the previous step.
 * `show(id)`: Show a specific step by id or index.
+* `isFirstStep([id])`: Omit the id argument to use the active step.
+* `isLastStep([id])`: Omit the id argument to use the active step.
+* `indexOf(id)`: Get the index of the specified step id.
 
 Example usage:
 ```js
