@@ -1,10 +1,17 @@
 var wizardsById = {};
 var defaultId = '_defaultId';
 
+function getRouter(){
+  if(typeof Router != "undefined")
+    return Router;
+  else if(typeof FlowRouter != "undefined")
+    return FlowRouter;
+}
+
 function stepParams(id) {
   return Tracker.nonreactive(function() {
     var params = {};
-    var router = Router || FlowRouter;
+    var router = getRouter();
     var route = router.current();
     params = route.params || {};
     return _.extend(params, {step: id});
@@ -12,7 +19,7 @@ function stepParams(id) {
 }
 
 Template.registerHelper('pathForStep', function(id) {
-  var router = Router || FlowRouter;
+  var router = getRouter();
   return router.path(this.wizard.route, stepParams(id));
 });
 
@@ -157,15 +164,16 @@ Wizard.prototype = {
     }
 
     var routeName, current;
-    if(Router){
-      current = Router.current();
+    var router = getRouter();
+    var current = router.current();
+    if(_.isFunction(current.route.getName)){
       routeName = current.route.getName();
-    }else if(FlowRouter){
-      current = FlowRouter.current();
+    }else if(current.route.path){
+      var step = router.getParam("step"); //FlowRouter.current() is not reactive, so we have to use the reactive FlowRouter.getParam() here.      
       routeName = current.route.path;
     }
     
-    if(!routeName || routeName != this.route))
+    if(!routeName || routeName != this.route)
       return false;
     
     var params = current.params
@@ -226,7 +234,7 @@ Wizard.prototype = {
     if(!id) return false;
 
     if(this.route) {
-      var router = Router || FlowRouter;
+      var router = getRouter();
       router.go(this.route, stepParams(id));
     } else {
       this.setStep(id);
