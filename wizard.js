@@ -3,15 +3,17 @@ var defaultId = '_defaultId';
 
 function stepParams(id) {
   return Tracker.nonreactive(function() {
-    var route = Router.current()
-      , params = route.params || {};
-      
+    var params = {};
+    var router = Router || FlowRouter;
+    var route = router.current();
+    params = route.params || {};
     return _.extend(params, {step: id});
   });
 }
 
 Template.registerHelper('pathForStep', function(id) {
-  return Router.path(this.wizard.route, stepParams(id));
+  var router = Router || FlowRouter;
+  return router.path(this.wizard.route, stepParams(id));
 });
 
 Template.wizard.created = function() {
@@ -154,9 +156,17 @@ Wizard.prototype = {
       return this.show(0);
     }
 
-    var current = Router.current();
+    var routeName, current;
+    if(Router){
+      current = Router.current();
+      routeName = current.route.getName();
+    }else if(FlowRouter){
+      current = FlowRouter.current();
+      routeName = current.route.path;
+    }
     
-    if(!current || (current && current.route.getName() != this.route)) return false;
+    if(!routeName || routeName != this.route))
+      return false;
     
     var params = current.params
       , index = _.indexOf(this._stepsByIndex, params.step)
@@ -216,7 +226,8 @@ Wizard.prototype = {
     if(!id) return false;
 
     if(this.route) {
-      Router.go(this.route, stepParams(id));
+      var router = Router || FlowRouter;
+      router.go(this.route, stepParams(id));
     } else {
       this.setStep(id);
     }
