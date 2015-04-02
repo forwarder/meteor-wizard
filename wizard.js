@@ -35,12 +35,15 @@ Template.wizard.helpers({
       wizard: wizardsById[this.id]
     }, outerContext);
   },
-  activeStep: function() {
+  activeStepTemplate: function() {
+    var self = this;
     // autoform doesn't support reactive schema yet,
     // need this to support a default step template.
     var activeStep = this.wizard.activeStep();
     return new Blaze.Template(function() {
-      return Blaze.With(activeStep, function() {
+      return Blaze.With(_.extend({
+        step: activeStep
+      }, self), function() {
         return Template[activeStep.template || '__wizard_step'];
       });
     });

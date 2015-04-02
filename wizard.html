@@ -2,7 +2,7 @@
   {{#with innerContext ..}}
   <div id="{{wizard.id}}" class="wizard">
     {{> Template.dynamic template=wizard.stepsTemplate}}
-    {{> activeStep}}
+    {{> activeStepTemplate}}
   </div>
   {{/with}}
 </template>
@@ -25,7 +25,7 @@
 
 <template name="__wizard_step">
   <div class="wizard-step">
-    {{#autoForm id=formId doc=data schema=schema}}
+    {{#autoForm id=step.formId doc=step.data schema=step.schema}}
       {{#each afFieldNames}}
         {{> afQuickField name=this options="auto"}}
       {{/each}}

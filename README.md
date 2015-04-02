@@ -70,11 +70,11 @@ If you need more flexibility in your forms, you can define your own templates to
 
 ```html
 <template name="information">
-  {{> quickform id="information-form" doc=data schema=schema}}
+  {{> quickform id="information-form" doc=step.data schema=step.schema}}
 </template>
 
 <template name="confirm">
-  {{> quickForm id="confirm-form" doc=data schema=schema}}
+  {{> quickForm id="confirm-form" doc=step.data schema=step.schema}}
 </template>
 ```
 
