@@ -11,12 +11,19 @@ function stepParams(id) {
 }
 
 Template.registerHelper('pathForStep', function(id) {
+  var activeStep = this.wizard.activeStep(false);
+  if (activeStep.id === id || !this.data() || this.wizard.indexOf(id) > this.wizard.indexOf(activeStep.id)) {
+    return null;
+  } else if (!Router || !this.wizard.route)  {
+    return '#' + id;
+  }
+  
   return Router.path(this.wizard.route, stepParams(id));
 });
 
 Template.wizard.created = function() {
   var id = this.data.id || defaultId;
-  wizardsById[id] = new Wizard(this.data);
+  this.wizard = wizardsById[id] = new Wizard(this.data);
 };
 
 Template.wizard.destroyed = function() {
@@ -30,23 +37,26 @@ Template.wizard.destroyed = function() {
 
 Template.wizard.helpers({
   innerContext: function(outerContext) {
-    var context = this;
+    var context = this
+    , wizard = Template.instance().wizard;
+
     return _.extend({
-      wizard: wizardsById[this.id]
+      wizard: wizard,
+      step: wizard.activeStep(),
     }, outerContext);
   },
   activeStepTemplate: function() {
-    var self = this;
-    // autoform doesn't support reactive schema yet,
-    // need this to support a default step template.
     var activeStep = this.wizard.activeStep();
-    return new Blaze.Template(function() {
-      return Blaze.With(_.extend({
-        step: activeStep
-      }, self), function() {
-        return Template[activeStep.template || '__wizard_step'];
-      });
-    });
+    return activeStep && (activeStep.template || '__wizard_step') || null;
+  }
+});
+
+Template.__wizard_steps.events({
+  'click a': function(e, tpl) {
+    if (!this.wizard.route) {
+      e.preventDefault();
+      this.wizard.show(this.id);
+    }
   }
 });
 
@@ -94,6 +104,10 @@ var Wizard = function(options) {
   
   _.extend(this, options);
   
+  if (this.route && typeof Router === 'undefined') {
+    throw new Meteor.Error('iron-router-required', 'iron:router not installed');
+  }
+  
   this._stepsByIndex = [];
   this._stepsById = {};
   
@@ -114,9 +128,18 @@ Wizard.prototype = {
     _.each(this.steps, function(step) {
       self._initStep(step);
     });
+
+    this._comp = Tracker.autorun(function() {
+      var current, step;
+      
+      if (self.route) {
+        current = Router.current();
+        if(current && current.route.getName() === self.route) {
+          step = current.params.step;
+        }
+      }
     
-    Tracker.autorun(function() {
-      self._setActiveStep();
+      self._setActiveStep(step);
     });
   },
 
@@ -124,7 +147,7 @@ Wizard.prototype = {
     var self = this;
     
     if (!step.id) {
-      throw new Meteor.Error('', 'Step.id is required');
+      throw new Meteor.Error('step-id-required', 'Step.id is required');
     }
     
     if (!step.formId) {
@@ -151,32 +174,27 @@ Wizard.prototype = {
     }, true);
   },
   
-  _setActiveStep: function() {
+  _setActiveStep: function(step) {
     // show the first step if not bound to a route
-    if(!this.route) {
+    if(!step) {
       return this.show(0);
     }
 
-    var current = Router.current();
-    
-    if(!current || (current && current.route.getName() != this.route)) return false;
-    
-    var params = current.params
-      , index = _.indexOf(this._stepsByIndex, params.step)
+    var index = this.indexOf(step)
       , previousStep = this.getStep(index - 1);
 
     // initial route or non existing step, redirect to first step
-    if(!params.step || index === -1) {
+    if(index === -1) {
       return this.show(0);
     }
-
+    
     // invalid step
     if(index > 0 && previousStep && !previousStep.data()) {
       return this.show(0);
     }
 
     // valid
-    this.setStep(params.step);
+    this.setStep(step);
   },
   
   setData: function(id, data) {
@@ -199,7 +217,7 @@ Wizard.prototype = {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
     
     this.setData(this._activeStepId, data);
-    
+
     this.show(activeIndex + 1);
   },
   
@@ -207,7 +225,7 @@ Wizard.prototype = {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
     this.setData(this._activeStepId, AutoForm.getFormValues(this.activeStep(false).formId));
-    
+
     this.show(activeIndex - 1);
   },
   
@@ -215,7 +233,7 @@ Wizard.prototype = {
     if(typeof id === 'number') {
       id = id in this._stepsByIndex && this._stepsByIndex[id];
     }
-    
+
     if(!id) return false;
 
     if(this.route) {
@@ -223,7 +241,7 @@ Wizard.prototype = {
     } else {
       this.setStep(id);
     }
-    
+
     return true;
   },
   
@@ -248,6 +266,10 @@ Wizard.prototype = {
     return this._stepsById[this._activeStepId];
   },
   
+  isActiveStep: function(id) {
+    return id === this._activeStepId;
+  },
+  
   isFirstStep: function(id) {
     id = id || this._activeStepId;
     return this.indexOf(id) === 0;
@@ -263,6 +285,8 @@ Wizard.prototype = {
   },
   
   destroy: function() {
+    this._comp.stop();
+    
     if(this.clearOnDestroy) this.clearData();
   } 
 };
