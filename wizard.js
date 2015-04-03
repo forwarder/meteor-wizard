@@ -162,14 +162,15 @@ Wizard.prototype = {
       }
     });
 
-    AutoForm.addHooks([step.formId], {
+    AutoForm.addHooks(step.formId, {
       onSubmit: function(data) {
+        this.event.preventDefault();
+        
         if(step.onSubmit) {
           step.onSubmit.call(this, data, self);
         } else {
           self.next(data);
         }
-        return false;
       }
     }, true);
   },
