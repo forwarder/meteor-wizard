@@ -72,9 +72,19 @@ If you need more flexibility in your forms, you can define your own templates to
 <template name="information">
   {{> quickform id="information-form" doc=step.data schema=step.schema}}
 </template>
+```
 
+or
+
+```html
 <template name="confirm">
-  {{> quickForm id="confirm-form" doc=step.data schema=step.schema}}
+  {{#autoForm id="confirm-form" doc=step.data schema=step.schema}}
+    
+    {{> afQuickField name="acceptTerms"}}
+    
+    {{> wizardButtons}} /* this will render back, next and confirm buttons */
+    
+  {{/autoForm}}
 </template>
 ```
 
