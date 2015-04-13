@@ -31,13 +31,13 @@
       {{#each afFieldNames}}
         {{> afQuickField name=this.name options=afOptionsFromSchema}}
       {{/each}}
-      {{> __wizard_nav}}
+      {{> wizardButtons}}
     {{/autoForm}}
   {{/if}}
   </div>
 </template>
 
-<template name="__wizard_nav">
+<template name="wizardButtons">
   {{#with wizard}}
   <nav class="wizard-nav">
     {{#if showBackButton}}

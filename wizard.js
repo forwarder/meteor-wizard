@@ -91,14 +91,14 @@ Template.__wizard_step.helpers({
   }
 });
 
-Template.__wizard_nav.events({
+Template.wizardButtons.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
     this.previous();
   }
 });
 
-Template.__wizard_nav.helpers({
+Template.wizardButtons.helpers({
   showBackButton: function() {
     return this.backButton && !this.isFirstStep();
   }
