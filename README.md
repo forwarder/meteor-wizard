@@ -13,7 +13,7 @@ $ meteor add forwarder:autoform-wizard
 
 ## Dependencies
 
-* AutoForm versions 3 or 4.
+* AutoForm versions 5.
 * Iron Router support is optional, works with version 1.
 
 
