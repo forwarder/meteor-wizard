@@ -11,6 +11,7 @@ Package.onUse(function(api) {
   api.use([
     'underscore',
     'tracker',
+    'reactive-var',
     'templating',
     'blaze',
     'session',

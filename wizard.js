@@ -67,6 +67,30 @@ Template.__wizard_steps.helpers({
   }
 });
 
+// Temporary fix because AutoForm doesnt support reactive schema's
+Template.__wizard_step.created = function() {
+  var self = this;
+  
+  this.destroyForm = new ReactiveVar(false);
+  
+  this.autorun(function() {
+    var data = Blaze.getData();
+    self.destroyForm.set(true);
+  });
+  
+  this.autorun(function () {
+    if (self.destroyForm.get()) {
+      self.destroyForm.set(false);
+    }
+  });
+};
+
+Template.__wizard_step.helpers({
+  destroyForm: function () {
+    return Template.instance().destroyForm.get();
+  }
+});
+
 Template.__wizard_nav.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
