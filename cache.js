@@ -38,7 +38,7 @@ _.extend(CacheStore.prototype, Session, {
   
   clear: function() {
     var self = this;
-    _.each(this.keys, function(key) {
+    _.each(this.keys, function(value, key) {
       Session.set(self.prefix(key), null);
     });
     if (this.persist)
