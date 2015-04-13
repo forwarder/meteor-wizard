@@ -24,6 +24,10 @@ Package.onUse(function(api) {
   api.addFiles([
     'wizard.html',
     'wizard.js',
+    'router.js',
     'cache.js'
   ], 'client');
+  
+  if (api.export)
+    api.export('Wizard', 'client');
 });

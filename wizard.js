@@ -1,29 +1,26 @@
 var wizardsById = {};
 var defaultId = '_defaultId';
 
-function stepParams(id) {
-  return Tracker.nonreactive(function() {
-    var route = Router.current()
-      , params = route.params || {};
-      
-    return _.extend(params, {step: id});
-  });
-}
+Wizard = {};
+
+Wizard.get = function(id) {
+  return wizardsById[id || defaultId];
+};
 
 Template.registerHelper('pathForStep', function(id) {
   var activeStep = this.wizard.activeStep(false);
   if (activeStep.id === id || !this.data() || this.wizard.indexOf(id) > this.wizard.indexOf(activeStep.id)) {
     return null;
-  } else if (!Router || !this.wizard.route)  {
+  } if (!this.wizard.route) {
     return '#' + id;
   }
   
-  return Router.path(this.wizard.route, stepParams(id));
+  return WizardRouter.path(this.wizard.route, id);
 });
 
 Template.wizard.created = function() {
   var id = this.data.id || defaultId;
-  this.wizard = wizardsById[id] = new Wizard(this.data);
+  this.wizard = wizardsById[id] = new WizardConstructor(this.data);
 };
 
 Template.wizard.destroyed = function() {
@@ -104,7 +101,7 @@ Template.wizardButtons.helpers({
   }
 });
 
-var Wizard = function(options) {
+var WizardConstructor = function(options) {
   this._dep = new Tracker.Dependency();
   
   options = _.chain(options).pick(
@@ -128,10 +125,6 @@ var Wizard = function(options) {
   
   _.extend(this, options);
   
-  if (this.route && typeof Router === 'undefined') {
-    throw new Meteor.Error('iron-router-required', 'iron:router not installed');
-  }
-  
   this._stepsByIndex = [];
   this._stepsById = {};
   
@@ -142,9 +135,9 @@ var Wizard = function(options) {
   this.initialize();
 };
 
-Wizard.prototype = {
+WizardConstructor.prototype = {
   
-  constructor: Wizard,
+  constructor: WizardConstructor,
 
   initialize: function() {
     var self = this;
@@ -154,15 +147,10 @@ Wizard.prototype = {
     });
 
     this._comp = Tracker.autorun(function() {
-      var current, step;
-      
-      if (self.route) {
-        current = Router.current();
-        if(current && current.route.getName() === self.route) {
-          step = current.params.step;
-        }
-      }
-    
+      var step;
+      if (self.route)
+        step = WizardRouter.getStep();
+
       self._setActiveStep(step);
     });
   },
@@ -202,7 +190,7 @@ Wizard.prototype = {
   _setActiveStep: function(step) {
     // show the first step if not bound to a route
     if(!step) {
-      return this.show(0);
+      return this.setStep(0);
     }
 
     var index = this.indexOf(step)
@@ -210,12 +198,12 @@ Wizard.prototype = {
 
     // initial route or non existing step, redirect to first step
     if(index === -1) {
-      return this.show(0);
+      return this.setStep(0);
     }
     
     // invalid step
     if(index > 0 && previousStep && !previousStep.data()) {
-      return this.show(0);
+      return this.setStep(0);
     }
 
     // valid
@@ -262,7 +250,7 @@ Wizard.prototype = {
     if(!id) return false;
 
     if(this.route) {
-      Router.go(this.route, stepParams(id));
+      WizardRouter.go(this.route, id);
     } else {
       this.setStep(id);
     }
@@ -286,6 +274,12 @@ Wizard.prototype = {
   },
   
   setStep: function(id) {
+    if(typeof id === 'number') {
+      id = id in this._stepsByIndex && this._stepsByIndex[id];
+    }
+
+    if(!id) return false;
+    
     this._activeStepId = id;
     this._dep.changed();
     return this._stepsById[this._activeStepId];
@@ -314,8 +308,4 @@ Wizard.prototype = {
     
     if(this.clearOnDestroy) this.clearData();
   } 
-};
-
-Template.wizard.get = function(id) {
-  return wizardsById[id || defaultId];
 };

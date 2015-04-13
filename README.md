@@ -183,12 +183,14 @@ Template.wizardStep2.events({
 ```
 
 
-## IronRouter support
+## Using routers
 
-You can also bind the wizard to Iron Router.
+It's possible to bind the wizard to a router. Iron Router support is supported by default.
+If you're using a different router, it's easy to setup custom bindings.
+
+### Iron Router
 
 Add a new route to your router config, with the :step parameter.
- 
 ```js
 Router.route('/order/:step', {name: 'order'});
 ```
@@ -196,6 +198,38 @@ Router.route('/order/:step', {name: 'order'});
 Add a route parameter with the name of the route to your wizard instance.
 ```
 {{> wizard id="order-wizard" route="order" steps=steps}}
+```
+
+### Custom router bindings
+
+If you use a different router you can easily setup custom bindings.
+This example will you show how to bind the wizard to Flow Router (meteorhacks:flow-router).
+
+```js
+Wizard.registerRouter('flow:router', {
+  go: function(name, stepId) {
+    FlowRouter.go(name, this.getParams(stepId));
+  },
+  getParams: function(stepId) {
+    var route = Router.current()
+      , params = route.params || {};
+  
+    return _.extend(params, {step: stepId});
+  },
+  getStep: function() {
+    return FlowRouter.getParam('step');
+  },
+  path: function(name, stepId) {
+    return FlowRouter.go(name, this.getParams(stepId));
+  }
+});
+
+```
+
+Then to enable Flow Router add the following line to your client code.
+
+```js
+Wizard.useRouter('flow:router');
 ```
 
 
