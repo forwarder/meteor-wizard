@@ -10,11 +10,16 @@ AutoForm Wizard is a multi step form component for AutoForm.
 $ meteor add forwarder:autoform-wizard
 ```
 
+## Upgrade notice
+
+### Upgrading to 0.7.*
+Iron router support has been moved to a separate package.
+See the [Using routers](#routers) section to see how to enable it.
+
 
 ## Dependencies
 
 * AutoForm versions 5.
-* Iron Router support is optional, works with version 1.
 
 
 ## Example
@@ -183,21 +188,48 @@ Template.wizardStep2.events({
 ```
 
 
-## Using routers
+## Using routers <a name="routers"></a>
 
-It's possible to bind the wizard to a router. Iron Router support is supported by default.
+It's possible to bind the wizard to a router. Iron Router and Flow Router are supported by default.
 If you're using a different router, it's easy to setup custom bindings.
 
-### Iron Router
+### Configuring a router
+
+1. First add the route name you want to use to your wizard instance.
+```
+{{> wizard id="order-wizard" route="order" steps=steps}}
+```
+
+#### Iron Router
+First add the Wizard Iron Router package.
+```
+meteor add forwarder:autoform-wizard-iron-router
+```
+
+Enable the router bindings.
+```js
+Wizard.useRouter('iron:router');
+```
 
 Add a new route to your router config, with the :step parameter.
 ```js
 Router.route('/order/:step', {name: 'order'});
 ```
 
-Add a route parameter with the name of the route to your wizard instance.
+#### Flow Router
+First add the Wizard Flow Router package.
 ```
-{{> wizard id="order-wizard" route="order" steps=steps}}
+meteor add forwarder:autoform-wizard-iron-router
+```
+
+Enable the router bindings.
+```js
+Wizard.useRouter('meteorhacks:flow-router');
+```
+
+Add a new route to your router config, with the :step parameter.
+```js
+FlowRouter.route('/order/:step', {name: 'order'});
 ```
 
 ### Custom router bindings
@@ -206,7 +238,7 @@ If you use a different router you can easily setup custom bindings.
 This example will you show how to bind the wizard to Flow Router (meteorhacks:flow-router).
 
 ```js
-Wizard.registerRouter('flow:router', {
+Wizard.registerRouter('meteorhacks:flow-router', {
   go: function(name, stepId) {
     FlowRouter.go(name, this.getParams(stepId));
   },
@@ -229,7 +261,7 @@ Wizard.registerRouter('flow:router', {
 Then to enable Flow Router add the following line to your client code.
 
 ```js
-Wizard.useRouter('flow:router');
+Wizard.useRouter('meteorhacks:flow-router');
 ```
 
 

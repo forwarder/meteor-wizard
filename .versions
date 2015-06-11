@@ -8,7 +8,7 @@ check@1.0.5
 ddp@1.1.0
 deps@1.0.7
 ejson@1.0.6
-forwarder:autoform-wizard@0.6.3
+forwarder:autoform-wizard@0.6.4
 geojson-utils@1.0.3
 html-tools@1.0.4
 htmljs@1.0.4
