@@ -219,7 +219,7 @@ Router.route('/order/:step', {name: 'order'});
 #### Flow Router
 First add the Wizard Flow Router package.
 ```
-meteor add forwarder:autoform-wizard-iron-router
+meteor add forwarder:autoform-wizard-flow-router
 ```
 
 Enable the router bindings.
