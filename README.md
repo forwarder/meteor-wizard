@@ -195,6 +195,8 @@ If you're using a different router, it's easy to setup custom bindings.
 
 ### Configuring a router
 
+* note that `Wizard` is only available in client code.
+
 1. First add the route name you want to use to your wizard instance.
 ```
 {{> wizard id="order-wizard" route="order" steps=steps}}
