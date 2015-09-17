@@ -27,7 +27,7 @@
   <div class="wizard-step">
   {{#if destroyForm}}
   {{else}}
-    {{#autoForm id=step.formId doc=step.data schema=step.schema}}
+    {{#autoForm id=step.formId doc=step.data schema=step.schema type=step.type}}
       {{#each afFieldNames}}
         {{> afQuickField name=this.name options=afOptionsFromSchema}}
       {{/each}}
