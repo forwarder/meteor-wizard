@@ -84,11 +84,11 @@ or
 ```html
 <template name="confirm">
   {{#autoForm id="confirm-form" doc=step.data schema=step.schema}}
-    
+
     {{> afQuickField name="acceptTerms"}}
-    
+
     {{> wizardButtons}} /* this will render back, next and confirm buttons */
-    
+
   {{/autoForm}}
 </template>
 ```
@@ -140,6 +140,12 @@ The following attributes are supported:
 * `persist`: Optional. Persist the step data in localStorage. Defaults to `true`.
 * `clearOnDestroy`: Optional. Clear the cache storage after closing the wizard. Defaults to `false`.
 * `stepsTemplate`: Optional. A custom steps template.
+
+#### Custom attributes
+To define a custom attribute and defaults values, for Example:
+```js
+  Wizard.extendOptions(['type', 'editButton'], {editButton: 'Edit'});
+```
 
 #### onSubmit
 Use this callback to process the form data.
@@ -247,7 +253,7 @@ Wizard.registerRouter('meteorhacks:flow-router', {
   getParams: function(stepId) {
     var route = Router.current()
       , params = route.params || {};
-  
+
     return _.extend(params, {step: stepId});
   },
   getStep: function() {
