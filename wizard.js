@@ -8,7 +8,7 @@ Wizard.get = function(id) {
 };
 
 Wizard.extendOptions = function(options, defaults) {
-  _options.concat(options);
+  _options = _options.concat(options);
   _.extend(_defaults, defaults);
 };
 
