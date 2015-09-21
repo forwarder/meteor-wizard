@@ -46,7 +46,7 @@ Template.wizard.helpers({
   },
   activeStepTemplate: function() {
     var activeStep = this.wizard.activeStep();
-    return activeStep && (activeStep.template || Wizard.stepTemplate) || null;
+    return activeStep && (activeStep.template || this.wizard.stepTemplate) || null;
   }
 });
 
@@ -111,6 +111,7 @@ var WizardConstructor = function(options) {
     'route',
     'steps',
     'stepsTemplate',
+    'stepTemplate',
     'buttonClasses',
     'nextButton',
     'backButton',
@@ -119,6 +120,7 @@ var WizardConstructor = function(options) {
     'clearOnDestroy'
   ).defaults({
     stepsTemplate: '__wizard_steps',
+    stepTemplate: '__wizard_step',
     nextButton: 'Next',
     backButton: 'Back',
     confirmButton: 'Confirm',
