@@ -7,7 +7,10 @@ Wizard.get = function(id) {
   return wizardsById[id || defaultId];
 };
 
-Wizard.stepTemplate = '__wizard_step';
+Wizard.extendOptions = function(options, defaults) {
+  _options = _options.concat(options);
+  _.extend(_defaults, defaults);
+};
 
 Template.registerHelper('pathForStep', function(id) {
   var activeStep = this.wizard.activeStep(false);
@@ -103,30 +106,33 @@ Template.wizardButtons.helpers({
   }
 });
 
-var WizardConstructor = function(options) {
-  this._dep = new Tracker.Dependency();
+var _options = [
+  'id',
+  'route',
+  'steps',
+  'stepsTemplate',
+  'stepTemplate',
+  'buttonClasses',
+  'nextButton',
+  'backButton',
+  'confirmButton',
+  'persist',
+  'clearOnDestroy'
+];
 
-  options = _.chain(options).pick(
-    'id',
-    'route',
-    'steps',
-    'stepsTemplate',
-    'stepTemplate',
-    'buttonClasses',
-    'nextButton',
-    'backButton',
-    'confirmButton',
-    'persist',
-    'clearOnDestroy'
-  ).defaults({
+var _defaults = {
     stepsTemplate: '__wizard_steps',
     stepTemplate: '__wizard_step',
     nextButton: 'Next',
     backButton: 'Back',
     confirmButton: 'Confirm',
     persist: true
-  }).value();
+}
 
+var WizardConstructor = function(options) {
+  this._dep = new Tracker.Dependency();
+
+  options = _.chain(options).pick(_options).defaults(_defaults).value();
   _.extend(this, options);
 
   this._stepsByIndex = [];
@@ -317,3 +323,5 @@ WizardConstructor.prototype = {
     if(this.clearOnDestroy) this.clearData();
   }
 };
+
+Wizard.WizardConstructor = WizardConstructor;
