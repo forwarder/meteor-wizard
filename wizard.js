@@ -170,6 +170,10 @@ WizardConstructor.prototype = {
       step.formId = step.id + '-form';
     }
 
+    if (step.data) {
+      this.setData(step.id, step.data);
+    }
+
     this._stepsByIndex.push(step.id);
     this._stepsById[step.id] = _.extend(step, {
       wizard: self,
