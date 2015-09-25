@@ -96,7 +96,7 @@ Template.__wizard_step.helpers({
 Template.wizardButtons.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
-    this.previous();
+    this.previous(AutoForm.getFormValues(this.activeStep(false).formId));
   }
 });
 
@@ -243,15 +243,19 @@ WizardConstructor.prototype = {
   next: function(data) {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
-    this.setData(this._activeStepId, data);
+    if(data) {
+      this.setData(this._activeStepId, data);
+    }
 
     this.show(activeIndex + 1);
   },
 
-  previous: function() {
+  previous: function(data) {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
-    this.setData(this._activeStepId, AutoForm.getFormValues(this.activeStep(false).formId));
+    if(data) {
+     this.setData(this._activeStepId, data);
+    }
 
     this.show(activeIndex - 1);
   },
