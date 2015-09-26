@@ -7,7 +7,10 @@ Wizard.get = function(id) {
   return wizardsById[id || defaultId];
 };
 
-Wizard.stepTemplate = '__wizard_step';
+Wizard.extendOptions = function(options, defaults) {
+  _options = _options.concat(options);
+  _.extend(_defaults, defaults);
+};
 
 Template.registerHelper('pathForStep', function(id) {
   var activeStep = this.wizard.activeStep(false);
@@ -93,7 +96,7 @@ Template.__wizard_step.helpers({
 Template.wizardButtons.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
-    this.previous();
+    this.previous(AutoForm.getFormValues(this.activeStep(false).formId));
   }
 });
 
@@ -103,30 +106,33 @@ Template.wizardButtons.helpers({
   }
 });
 
-var WizardConstructor = function(options) {
-  this._dep = new Tracker.Dependency();
+var _options = [
+  'id',
+  'route',
+  'steps',
+  'stepsTemplate',
+  'stepTemplate',
+  'buttonClasses',
+  'nextButton',
+  'backButton',
+  'confirmButton',
+  'persist',
+  'clearOnDestroy'
+];
 
-  options = _.chain(options).pick(
-    'id',
-    'route',
-    'steps',
-    'stepsTemplate',
-    'stepTemplate',
-    'buttonClasses',
-    'nextButton',
-    'backButton',
-    'confirmButton',
-    'persist',
-    'clearOnDestroy'
-  ).defaults({
+var _defaults = {
     stepsTemplate: '__wizard_steps',
     stepTemplate: '__wizard_step',
     nextButton: 'Next',
     backButton: 'Back',
     confirmButton: 'Confirm',
     persist: true
-  }).value();
+}
 
+var WizardConstructor = function(options) {
+  this._dep = new Tracker.Dependency();
+
+  options = _.chain(options).pick(_options).defaults(_defaults).value();
   _.extend(this, options);
 
   this._stepsByIndex = [];
@@ -168,6 +174,10 @@ WizardConstructor.prototype = {
 
     if (!step.formId) {
       step.formId = step.id + '-form';
+    }
+
+    if (step.data) {
+      this.setData(step.id, step.data);
     }
 
     this._stepsByIndex.push(step.id);
@@ -233,15 +243,19 @@ WizardConstructor.prototype = {
   next: function(data) {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
-    this.setData(this._activeStepId, data);
+    if(data) {
+      this.setData(this._activeStepId, data);
+    }
 
     this.show(activeIndex + 1);
   },
 
-  previous: function() {
+  previous: function(data) {
     var activeIndex = _.indexOf(this._stepsByIndex, this._activeStepId);
 
-    this.setData(this._activeStepId, AutoForm.getFormValues(this.activeStep(false).formId));
+    if(data) {
+     this.setData(this._activeStepId, data);
+    }
 
     this.show(activeIndex - 1);
   },
@@ -313,3 +327,5 @@ WizardConstructor.prototype = {
     if(this.clearOnDestroy) this.clearData();
   }
 };
+
+Wizard.WizardConstructor = WizardConstructor;
