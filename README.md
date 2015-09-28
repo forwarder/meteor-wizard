@@ -84,11 +84,11 @@ or
 ```html
 <template name="confirm">
   {{#autoForm id="confirm-form" doc=step.data schema=step.schema}}
-    
+
     {{> afQuickField name="acceptTerms"}}
-    
+
     {{> wizardButtons}} /* this will render back, next and confirm buttons */
-    
+
   {{/autoForm}}
 </template>
 ```
@@ -129,7 +129,8 @@ The following attributes are supported:
   * `title`: Optional. The title displayed in the breadcrumbs.
   * `template`: Optional. Uses a default template with a quickform if not set.
   * `schema`: Optional. Only required if don't use a custom template.
-  * `formId`: Optional. The AutoForm form id used in the template. Appends '-form' to the step.id if not set. Used to attach submit handlers and retreive the step data.
+  * `formId`: Optional. The AutoForm form id used in the template. Appends '-form' to the step.id if not set. Used to attach submit handlers and retrieve the step data.
+  * `data`: Optional. Object with initial data for the step, for example a document, when using an update form. *Overwrites previous saved data*.
   * `onSubmit`: Optional. This function is executed after the form is submitted and validates. `this` references to the AutoForm instance. Shows the next step by default. Parameters:
       * `data`: The current step data.
       * `wizard`: The wizard instance.
@@ -140,6 +141,7 @@ The following attributes are supported:
 * `persist`: Optional. Persist the step data in localStorage. Defaults to `true`.
 * `clearOnDestroy`: Optional. Clear the cache storage after closing the wizard. Defaults to `false`.
 * `stepsTemplate`: Optional. A custom steps template.
+* `stepTemplate`: Optional. A custom default template for each step.
 
 #### onSubmit
 Use this callback to process the form data.
@@ -226,7 +228,7 @@ meteor add forwarder:autoform-wizard-flow-router
 
 Enable the router bindings.
 ```js
-Wizard.useRouter('meteorhacks:flow-router');
+Wizard.useRouter('kadira:flow-router');
 ```
 
 Add a new route to your router config, with the :step parameter.
@@ -240,14 +242,14 @@ If you use a different router you can easily setup custom bindings.
 This example will you show how to bind the wizard to Flow Router (meteorhacks:flow-router).
 
 ```js
-Wizard.registerRouter('meteorhacks:flow-router', {
+Wizard.registerRouter('kadira:flow-router', {
   go: function(name, stepId) {
     FlowRouter.go(name, this.getParams(stepId));
   },
   getParams: function(stepId) {
     var route = Router.current()
       , params = route.params || {};
-  
+
     return _.extend(params, {step: stepId});
   },
   getStep: function() {
@@ -263,7 +265,7 @@ Wizard.registerRouter('meteorhacks:flow-router', {
 Then to enable Flow Router add the following line to your client code.
 
 ```js
-Wizard.useRouter('meteorhacks:flow-router');
+Wizard.useRouter('kadira:flow-router');
 ```
 
 
