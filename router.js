@@ -2,6 +2,7 @@ var routers = {}, activeRouter = 'default';
 
 var defaultConfig = {
   go: function(name, stepId) {},
+  reload: function(name, stepId) {},
   getParams: function(stepId) {},
   getStep: function() {},
   path: function(name, stepId) {
@@ -16,6 +17,9 @@ WizardRouter = {
   },
   go: function() {
     return this.apply('go', arguments);
+  },
+  reload: function() {
+    return this.apply('reload', arguments);
   },
   getParams: function() {
     return this.apply('getParams', arguments);
