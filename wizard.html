@@ -25,15 +25,12 @@
 
 <template name="__wizard_step">
   <div class="wizard-step">
-  {{#if destroyForm}}
-  {{else}}
-    {{#autoForm id=step.formId doc=step.data schema=step.schema}}
-      {{#each afFieldNames}}
-        {{> afQuickField name=this.name options=afOptionsFromSchema}}
-      {{/each}}
-      {{> wizardButtons}}
-    {{/autoForm}}
-  {{/if}}
+  {{#autoForm id=step.formId doc=step.data schema=step.schema}}
+    {{#each afFieldNames}}
+      {{> afQuickField name=this.name options=afOptionsFromSchema}}
+    {{/each}}
+    {{> wizardButtons}}
+  {{/autoForm}}
   </div>
 </template>
 
