@@ -29,5 +29,8 @@ Package.onUse(function(api) {
   ], 'client');
 
   if (api.export)
-    api.export('Wizard', 'client');
+    api.export([
+      'Wizard',
+      'WizardRouter'
+    ], 'client');
 });
