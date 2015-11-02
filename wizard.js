@@ -61,7 +61,7 @@ Template.__wizard_steps.helpers({
 Template.wizardButtons.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
-    this.previous(this.activeStep().data());
+    this.previous(AutoForm.getFormValues("datetime-form").insertDoc);
   }
 });
 
