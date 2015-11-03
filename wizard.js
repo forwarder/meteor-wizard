@@ -61,7 +61,7 @@ Template.__wizard_steps.helpers({
 Template.wizardButtons.events({
   'click .wizard-back-button': function(e) {
     e.preventDefault();
-    this.previous(AutoForm.getFormValues(this.activeStep(false).formId));
+      this.previous(AutoForm.getFormValues(this.activeStep().formId).insertDoc);
   }
 });
 
