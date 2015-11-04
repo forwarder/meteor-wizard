@@ -150,7 +150,7 @@ Wizard configuration attributes can be extended with `Wizard.extendOptions`
 ```
 with default value:
 ```js
-  Wizard.extendOptions(['wizardClass'], {wizardClass: 'nav-wizard'});
+  Wizard.extendOptions(['editButton', 'wizardClass'], {wizardClass: 'nav-wizard'});
 ```
 
 #### onSubmit
