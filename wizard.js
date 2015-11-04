@@ -2,9 +2,11 @@ var wizardsById = {};
 var defaultId = '_defaultId';
 
 Template.registerHelper('pathForStep', function(id) {
-  var activeStep = this.wizard.activeStep(false);
-  if (activeStep.id === id || !this.data() || this.wizard.indexOf(id) > this.wizard.indexOf(activeStep.id)) {
-    return null;
+  if (!this.wizard.forceStepsPath) {
+    var activeStep = this.wizard.activeStep(false);
+    if (activeStep.id === id || !this.data() || this.wizard.indexOf(id) > this.wizard.indexOf(activeStep.id)) {
+      return null;
+    }
   } if (!this.wizard.route) {
     return '#' + id;
   }
@@ -82,6 +84,7 @@ var _options = [
   'backButton',
   'confirmButton',
   'persist',
+  'forceStepsPath',
   'clearOnDestroy'
 ];
 
@@ -91,7 +94,8 @@ var _defaults = {
   nextButton: 'Next',
   backButton: 'Back',
   confirmButton: 'Confirm',
-  persist: true
+  persist: true,
+  forceStepsPath: false
 }
 
 Wizard = function(options) {
