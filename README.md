@@ -143,6 +143,16 @@ The following attributes are supported:
 * `stepsTemplate`: Optional. A custom steps template.
 * `stepTemplate`: Optional. A custom default template for each step.
 
+#### Custom attributes
+Wizard configuration attributes can be extended with `Wizard.extendOptions`
+```js
+  Wizard.extendOptions(['wizardClass']);
+```
+with default value:
+```js
+  Wizard.extendOptions(['wizardClass'], {wizardClass: 'nav-wizard'});
+```
+
 #### onSubmit
 Use this callback to process the form data.
 ```js
