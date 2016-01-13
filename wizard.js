@@ -9,7 +9,7 @@ Template.registerHelper('pathForStep', function(id) {
     return '#' + id;
   }
 
-  return WizardRouter.path(this.wizard.route, id);
+  return Wizard.Router.path(this.wizard.route, id);
 });
 
 Template.wizard.created = function() {
@@ -133,7 +133,7 @@ Wizard.prototype = {
     this._comp = Tracker.autorun(function() {
       var step;
       if (self.route)
-        step = WizardRouter.getStep();
+        step = Wizard.Router.getStep();
 
       self._setActiveStep(step);
     });
@@ -242,7 +242,7 @@ Wizard.prototype = {
     if(!id) return false;
 
     if(this.route) {
-      WizardRouter.go(this.route, id);
+      Wizard.Router.go(this.route, id);
     } else {
       this.setStep(id);
     }
