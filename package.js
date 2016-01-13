@@ -28,6 +28,5 @@ Package.onUse(function(api) {
     'cache.js'
   ], 'client');
 
-  if (api.export)
-    api.export('Wizard', 'client');
+  api.export('Wizard', 'client');
 });
