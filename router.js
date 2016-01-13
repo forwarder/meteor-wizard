@@ -9,7 +9,7 @@ var defaultConfig = {
   }
 };
 
-WizardRouter = {
+Wizard.Router = {
   apply: function(method, args) {
     var router = routers[activeRouter];
     return router[method].apply(router, args);
