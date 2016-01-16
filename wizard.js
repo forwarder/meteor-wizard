@@ -169,6 +169,7 @@ Wizard.prototype = {
         if(step.onSubmit) {
           step.onSubmit.call(this, data, self);
         } else {
+          this.done();
           self.next(data);
         }
       }
