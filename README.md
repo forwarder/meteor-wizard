@@ -182,9 +182,10 @@ Arguments:
 The wizard instance is added to your step templates data context, so you can access these methods in your event handlers etc.
 
 * `mergedData()`: Get all data from previous steps. Does not include data of the current step in the onSubmit callback.
-* `next()`: Go to the next step.
+* `next([data])`: Go to the next step. Optinionally pass data of the current step to make it available in `mergedData()`.
 * `previous()`: Go to the previous step.
 * `show(id)`: Show a specific step by id or index.
+* `setData(id, data)` Store data for the supplied step id, use this if you're using custom onSubmit handlers and use `show()` to skip steps based on the submitted data for example.
 * `isFirstStep([id])`: Omit the id argument to use the active step.
 * `isLastStep([id])`: Omit the id argument to use the active step.
 * `indexOf(id)`: Get the index of the specified step id.
