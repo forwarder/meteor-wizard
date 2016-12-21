@@ -28,5 +28,8 @@ Package.onUse(function(api) {
     'cache.js'
   ], 'client');
 
-  api.export('Wizard', 'client');
+  api.export([
+    'Wizard',
+    'WizardRouter'
+  ], 'client');
 });
