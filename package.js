@@ -1,7 +1,7 @@
 Package.describe({
   name: 'forwarder:autoform-wizard',
   summary: 'A multi step form component for AutoForm.',
-  version: '0.9.1',
+  version: '0.10.0',
   git: 'https://github.com/forwarder/meteor-wizard.git'
 });
 
@@ -19,7 +19,7 @@ Package.onUse(function(api) {
     'localstorage'
   ], 'client');
 
-  api.use('aldeed:autoform@5.7.0', 'client');
+  api.use('aldeed:autoform@6.0.0', 'client');
 
   api.addFiles([
     'wizard.html',
